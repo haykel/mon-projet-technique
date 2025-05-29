@@ -1,0 +1,29 @@
+<h1>Liste des Devis</h1>
+
+<input type="text" id="search" value="{{ q }}" placeholder="Rechercher client">
+<button onclick="location.href='?q=' + document.getElementById('search').value">
+  Filtrer
+</button>
+<a href="{% url 'nouveau_devis' %}"><button>Nouveau devis</button></a>
+
+<table>
+  <thead>
+    <tr>
+      <th>Opportunité</th><th>Client</th><th>Tarif</th><th>Prime</th><th>PDF</th><th>DOCX</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for d in devis_list %}
+    <tr>
+      <td>{{ d.numero_opportunite }}</td>
+      <td>{{ d.nom_client }}</td>
+      <td>{{ d.tarif }}</td>
+      <td>{{ d.prime_totale }}</td>
+      <td><a href="{% url 'export_pdf' d.id %}">PDF</a></td>
+      <td><a href="{% url 'export_docx' d.id %}">DOCX</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">Aucun devis</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
