@@ -18,70 +18,70 @@ Prérequis
 
 1. Cloner le dépôt
 
-git clone [https://github.com/haykel/mon-projet-technique.git]
-cd mon-projet-technique
+     git clone [https://github.com/haykel/mon-projet-technique.git]
+     cd mon-projet-technique
 
 ---
 
 2. Lancer le back-end (Django)
 
-cd backend
+      cd backend
 
-1. Créer et activer un environnement virtuel :
+      2.1. Créer et activer un environnement virtuel :
 
-   python3 -m venv .venv
+            python3 -m venv .venv
+
+            source .venv/bin/activate
+
+      2.2. Installer les dépendances :
+
+            pip install --upgrade pip
    
-   source .venv/bin/activate
+            pip install -r requirements.txt
 
-3. Installer les dépendances :
+      2.3. Configurer les variables d’environnement
+            Créez un fichier .env à la racine de backend/ (ne pas versionner ce fichier) :
 
-   pip install --upgrade pip
+            SECRET_KEY=une_clé_secrète_de_votre_choix
    
-   pip install -r requirements.txt
-
-5. Configurer les variables d’environnement
-   Créez un fichier .env à la racine de backend/ (ne pas versionner ce fichier) :
-
-   SECRET_KEY=une_clé_secrète_de_votre_choix
+            DEBUG=True
    
-   DEBUG=True
+            DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
    
-   DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+            DATABASE_URL=sqlite:///db.sqlite3
+
+      2.4. Appliquer les migrations et créer un super-utilisateur :
+
+            python manage.py migrate
    
-   DATABASE_URL=sqlite:///db.sqlite3
+            python manage.py createsuperuser
 
-7. Appliquer les migrations et créer un super-utilisateur :
+      2.5. Démarrer le serveur Django :
 
-   python manage.py migrate
+            python manage.py runserver
+
+            - L’API est disponible sur http://localhost:8000/api/
    
-   python manage.py createsuperuser
-
-9. Démarrer le serveur Django :
-
-   python manage.py runserver
-
-   - L’API est disponible sur http://localhost:8000/api/
-   - 
-   - La documentation Swagger sur http://localhost:8000/swagger/
+            - La documentation Swagger sur http://localhost:8000/swagger/
 
 ---
 
 3. Lancer le front-end (React)
 
-cd frontend
+      cd frontend
 
-1. Installer les dépendances :
+      3.1. Installer les dépendances :
 
-   npm install
+         npm install
 
-2. Configurer la variable d’environnement
-   Créez un fichier .env à la racine de frontend/ (qui contient l'url de base de DRF) :
+      3.2. Configurer la variable d’environnement
+         Créez un fichier .env à la racine de frontend/ (qui contient l'url de base de DRF) :
 
-   REACT_APP_API_BASE_URL=http://localhost:8000/api/
+         REACT_APP_API_BASE_URL=http://localhost:8000/api/
 
-3. Démarrer le serveur de développement :
+      3.3. Démarrer le serveur de développement :
 
-   npm start
+         npm start
 
-   - L’application React est disponible sur http://localhost:3000
+         - L’application React est disponible sur http://localhost:3000
 
