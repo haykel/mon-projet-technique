@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+env/
+*.sqlite3
+media/
+staticfiles/
+
+# Node.js / React
+node_modules/
+build/
+yarn-error.log
