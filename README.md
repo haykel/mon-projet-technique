@@ -75,7 +75,7 @@ cd frontend
    npm install
 
 2. Configurer la variable d’environnement
-   Créez un fichier .env à la racine de frontend/ (ne pas versionner ce fichier) :
+   Créez un fichier .env à la racine de frontend/ (qui contient l'url de base de DRF) :
 
    REACT_APP_API_BASE_URL=http://localhost:8000/api/
 
@@ -85,31 +85,3 @@ cd frontend
 
    - L’application React est disponible sur http://localhost:3000
 
----
-
-4. Workflow rapide
-
-1. Cloner le repo
-2. Back-end
-
-cd backend
-source .venv/bin/activate       # ou .\.venv\Scripts\activate sous Windows
-pip install -r requirements.txt
-# Créer .env puis :
-python manage.py migrate
-
-python manage.py createsuperuser
-
-python manage.py runserver
-
-3. Front-end
-
-cd frontend
-
-npm install
-
-npm start
-
-4. Ouvrir le navigateur :
-   - Back-end : http://localhost:8000/swagger/
-   - Front-end : http://localhost:3000
