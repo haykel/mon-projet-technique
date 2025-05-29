@@ -18,7 +18,7 @@ Prérequis
 
 1. Cloner le dépôt
 
-git clone https://votre-repo.git/mon-projet-technique.git
+git clone [https://github.com/haykel/mon-projet-technique.git]
 cd mon-projet-technique
 
 ---
@@ -103,42 +103,3 @@ npm start
 4. Ouvrir le navigateur :
    - Back-end : http://localhost:8000/swagger/
    - Front-end : http://localhost:3000
-
----
-
-5. Bonnes pratiques
-
-- Ne pas committer les fichiers .env
-- Utiliser des branches Git pour chaque nouvelle fonctionnalité
-- Exécuter les tests Django avant chaque merge :
-
-  cd backend
-  python manage.py test
-
-- Mettre à jour la documentation Swagger dès qu’un endpoint change
-- Vérifier les logs Nginx/Gunicorn en cas de problème en production
-
----
-
-6. Structure du projet
-
-mon-projet-technique/
-├── backend/        ← application Django
-│   ├── mon_projet/ ── code Django (settings, urls, wsgi…)
-│   ├── devis/      ── app Devis (models, views, serializers…)
-│   ├── users/      ── app Users (auth custom)
-│   ├── manage.py
-│   ├── requirements.txt
-│   └── .env        ← variables d’environnement (à créer)
-└── frontend/       ← application React
-    ├── public/
-    ├── src/
-    │   ├── api.js
-    │   ├── context/
-    │   ├── components/
-    │   ├── App.js
-    │   └── .env    ← variables d’environnement (à créer)
-    ├── package.json
-    └── README.md
-
-*README généré automatiquement – n’hésitez pas à l’adapter selon votre environnement de production.*
