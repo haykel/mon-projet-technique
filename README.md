@@ -30,31 +30,38 @@ cd backend
 1. Créer et activer un environnement virtuel :
 
    python3 -m venv .venv
+   
    source .venv/bin/activate
 
-2. Installer les dépendances :
+3. Installer les dépendances :
 
    pip install --upgrade pip
+   
    pip install -r requirements.txt
 
-3. Configurer les variables d’environnement
+5. Configurer les variables d’environnement
    Créez un fichier .env à la racine de backend/ (ne pas versionner ce fichier) :
 
    SECRET_KEY=une_clé_secrète_de_votre_choix
+   
    DEBUG=True
+   
    DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+   
    DATABASE_URL=sqlite:///db.sqlite3
 
-4. Appliquer les migrations et créer un super-utilisateur :
+7. Appliquer les migrations et créer un super-utilisateur :
 
    python manage.py migrate
+   
    python manage.py createsuperuser
 
-5. Démarrer le serveur Django :
+9. Démarrer le serveur Django :
 
    python manage.py runserver
 
    - L’API est disponible sur http://localhost:8000/api/
+   - 
    - La documentation Swagger sur http://localhost:8000/swagger/
 
 ---
@@ -90,14 +97,17 @@ source .venv/bin/activate       # ou .\.venv\Scripts\activate sous Windows
 pip install -r requirements.txt
 # Créer .env puis :
 python manage.py migrate
+
 python manage.py createsuperuser
+
 python manage.py runserver
 
 3. Front-end
 
 cd frontend
+
 npm install
-# Créer .env puis :
+
 npm start
 
 4. Ouvrir le navigateur :
