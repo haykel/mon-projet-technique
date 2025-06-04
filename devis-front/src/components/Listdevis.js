@@ -1,3 +1,4 @@
+// src/components/Listdevis.js
 import React, { useMemo, useState, useEffect, useContext } from 'react';
 import { MaterialReactTable } from 'material-react-table';
 import { MRT_Localization_FR } from 'material-react-table/locales/fr';
@@ -9,15 +10,22 @@ import GenerateDevisPDF from './GenerateDevisPDF';
 import GenerateDevisDOCX from './GenerateDevisDOCX';
 import EditDevisForm from './EditDevisForm';
 
-export default function Listdevis() {
-  const { api } = useContext(AuthContext);
-  const [devis, setDevis]         = useState([]);
-  const [loading, setLoading]     = useState(true);
-  const [error, setError]         = useState(null);
-  const [editing, setEditing]     = useState(null);
+export default function Listdevis({ devis, setDevis }) {
+  const { api, token } = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [editing, setEditing] = useState(null);
 
-  // fetch
+  // Charger la liste au montage si elle est vide
   useEffect(() => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+    if (devis.length > 0) {
+      setLoading(false);
+      return;
+    }
     (async () => {
       try {
         const { data } = await api.get('devis/');
@@ -28,68 +36,75 @@ export default function Listdevis() {
         setLoading(false);
       }
     })();
-  }, [api]);
+  }, [api, token, setDevis, devis.length]);
 
-  const refreshList = async () => {
-    const { data } = await api.get('devis/');
-    setDevis(data.results||data);
+  const handleDelete = async (id) => {
+    try {
+      await api.delete(`devis/${id}/`);
+      setDevis((prev) => prev.filter((x) => x.id !== id));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleDelete = async id => {
-    await api.delete(`devis/${id}/`);
-    setDevis(d => d.filter(x => x.id !== id));
-  };
-
-  // succès édition
-  const onEditSuccess = updated => {
+  const onEditSuccess = (updated) => {
     setEditing(null);
-    setDevis(d => d.map(x => x.id===updated.id? updated: x));
+    setDevis((prev) => prev.map((x) => (x.id === updated.id ? updated : x)));
   };
 
-  const columns = useMemo(() => [
-    { accessorKey: 'numero_opportunite', header: 'Opportunité' },
-    { accessorKey: 'tarif', header: 'Tarif' },
-    { accessorKey: 'prime_totale', header: 'Prime' },
-    {
-      accessorKey: 'created_at', header: 'Date',
-      Cell: ({ cell }) => cell.getValue().split('T')[0],
-    },
-    {
-      id: 'actions', header: 'Actions',
-      Cell: ({ row }) => (
-        <>
-          <IconButton onClick={() => handleDelete(row.original.id)}><DeleteForeverIcon color="error"/></IconButton>
-          <IconButton onClick={() => setEditing(row.original)}><EditIcon color="primary"/></IconButton>
-        </>
-      ),
-    },
-    {
-      id: 'export', header: 'Export',
-      Cell: ({ row }) => (
-        <>
-          <GenerateDevisPDF devis={row.original} filename={`devis_${row.original.numero_opportunite}.pdf`} />
-          <GenerateDevisDOCX devis={row.original} filename={`devis_${row.original.numero_opportunite}.docx`} />
-        </>
-      ),
-    },
-  ], [devis]);
+  const columns = useMemo(
+    () => [
+      { accessorKey: 'numero_opportunite', header: 'Opportunité' },
+      { accessorKey: 'tarif', header: 'Tarif' },
+      { accessorKey: 'prime_totale', header: 'Prime' },
+      {
+        accessorKey: 'created_at',
+        header: 'Date',
+        Cell: ({ cell }) => cell.getValue().split('T')[0],
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        Cell: ({ row }) => (
+          <>
+            <IconButton onClick={() => handleDelete(row.original.id)}>
+              <DeleteForeverIcon color="error" />
+            </IconButton>
+            <IconButton onClick={() => setEditing(row.original)}>
+              <EditIcon color="primary" />
+            </IconButton>
+          </>
+        ),
+      },
+      {
+        id: 'export',
+        header: 'Export',
+        Cell: ({ row }) => (
+          <>
+            <GenerateDevisPDF
+              devis={row.original}
+              filename={`devis_${row.original.numero_opportunite}.pdf`}
+            />
+            <GenerateDevisDOCX
+              devis={row.original}
+              filename={`devis_${row.original.numero_opportunite}.docx`}
+            />
+          </>
+        ),
+      },
+    ],
+    []
+  );
 
-  if (loading) return <p>Chargement…</p>;
-  if (error)   return <p>Erreur : {error.message}</p>;
-  if (!devis.length) return <p>Aucun devis</p>;
+  if (!token) return <p>Vous devez vous connecter.</p>;
+  if (loading) return <p>Chargement des devis…</p>;
+  if (error) return <p>Erreur : {error.response?.data?.detail || error.message}</p>;
+  if (!devis.length) return <p>Aucun devis disponible.</p>;
 
   return (
     <>
-      <MaterialReactTable
-        columns={columns}
-        data={devis}
-        localization={MRT_Localization_FR}
-      />
+      <MaterialReactTable columns={columns} data={devis} localization={MRT_Localization_FR} />
 
-      {/* Popup création */}
-      
-
-      {/* Popup édition */}
       {editing && (
         <EditDevisForm
           open={!!editing}

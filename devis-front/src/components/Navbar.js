@@ -1,10 +1,10 @@
+// src/components/Navbar.js
 import React, { useContext } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { AuthContext } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
 
 const menuItems = [
   'VÉHICULES',
@@ -15,12 +15,11 @@ const menuItems = [
 ];
 
 export default function Navbar() {
-  const { token, user, logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
 
   return (
     <AppBar position="static" sx={{ bgcolor: '#ffffff', boxShadow: 'none' }}>
       <Toolbar sx={{ justifyContent: 'space-between', fontFamily: 'Source Sans Pro, sans-serif' }}>
-        {/* Logo */}
         <Box>
           <a href="#">
             <img
@@ -32,7 +31,6 @@ export default function Navbar() {
           </a>
         </Box>
 
-        {/* Menu principal */}
         <Box sx={{ display: 'flex', gap: 2 }}>
           {menuItems.map((item) => (
             <Button
@@ -56,8 +54,7 @@ export default function Navbar() {
           ))}
         </Box>
 
-        {/* Actions utilitaires */}
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           <Button
             variant="outlined"
             color="inherit"
@@ -74,22 +71,36 @@ export default function Navbar() {
             SINISTRE & ASSISTANCE
           </Button>
 
-          {/* Bouton Espace Client / Nom d'utilisateur */}
-          {token ? (
-            <Button
-              variant="contained"
-              sx={{
-                bgcolor: '#00008f',
-                color: '#ffffff',
-                fontWeight: 'bold',
-                borderRadius: '20px',
-                textTransform: 'none',
-                fontFamily: 'Source Sans Pro, sans-serif',
-              }}
-              onClick={() => window.location.href = '/app'}
-            >
-              {user?.username || 'Espace Client'}
-            </Button>
+          {user ? (
+            <>
+              <Button
+                variant="contained"
+                sx={{
+                  bgcolor: '#00008f',
+                  color: '#ffffff',
+                  fontWeight: 'bold',
+                  borderRadius: '20px',
+                  textTransform: 'none',
+                  fontFamily: 'Source Sans Pro, sans-serif',
+                }}
+              >
+                {user.username}
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={logout}
+                sx={{
+                  color: '#00008f',
+                  borderColor: '#00008f',
+                  fontWeight: 'bold',
+                  textTransform: 'none',
+                  fontFamily: 'Source Sans Pro, sans-serif',
+                  borderRadius: '20px',
+                }}
+              >
+                Déconnexion
+              </Button>
+            </>
           ) : (
             <Button
               variant="contained"
@@ -101,23 +112,9 @@ export default function Navbar() {
                 textTransform: 'none',
                 fontFamily: 'Source Sans Pro, sans-serif',
               }}
-              onClick={() => window.location.href = '/login'}
+              href="/login"
             >
               Espace Client
-            </Button>
-          )}
-
-          {token && (
-            <Button
-              color="error"
-              sx={{
-                fontWeight: 'bold',
-                textTransform: 'none',
-                fontFamily: 'Source Sans Pro, sans-serif',
-              }}
-              onClick={logout}
-            >
-              Déconnexion
             </Button>
           )}
         </Box>

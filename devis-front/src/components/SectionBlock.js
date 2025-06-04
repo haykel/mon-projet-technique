@@ -1,3 +1,4 @@
+// src/components/SectionBlock.js
 import React, { useState } from 'react';
 import Listdevis from './Listdevis';
 import Button from '@mui/material/Button';
@@ -6,35 +7,39 @@ import Stack from '@mui/material/Stack';
 import DevisForm from './DevisForm';
 import bgImage from '../Header-les-aidants.jpg';
 
-const containerStyles = {
-  width: "90%",
-  margin: "auto",
-  minHeight: "100vh",
-  paddingTop: "24px",
+const myStylesSection = {
+  backgroundImage: `url(${bgImage})`,
+  backgroundSize: 'contain',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'top',
+  paddingTop: '100px',
 };
 
-const sectionStyles = {
-  backgroundImage: `url(${bgImage})`,
-  backgroundSize: "contain",
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "top",
+const myStyles = {
+  width: '90%',
+  position: 'relative',
+  margin: 'auto',
+  padding: '0',
+  minHeight: '100vh',
 };
 
 export default function SectionBlock() {
   const [openForm, setOpenForm] = useState(false);
+  const [devisList, setDevisList] = useState([]);
 
   const handleAddClick = () => setOpenForm(true);
-  const handleClose    = () => setOpenForm(false);
-  const handleSuccess  = () => {
+  const handleClose = () => setOpenForm(false);
+
+  // onSuccess reçoit l'objet créé depuis l'API
+  const handleSuccess = (nouveauDevis) => {
+    setDevisList((prev) => [nouveauDevis, ...prev]);
     setOpenForm(false);
-    // rafraîchir la liste de devis
-    window.location.reload();
   };
 
   return (
-    <section style={sectionStyles}>
-      <div style={containerStyles}>
-        <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
+    <section style={myStylesSection} className="p-4">
+      <div style={myStyles}>
+        <Stack direction="row" spacing={2} sx={{ marginBottom: 2 }}>
           <Button
             variant="contained"
             endIcon={<AddCircleOutlineIcon />}
@@ -43,16 +48,8 @@ export default function SectionBlock() {
             Générer un devis
           </Button>
         </Stack>
-
-        {/* Liste des devis */}
-        <Listdevis />
-
-        {/* Formulaire en modal */}
-        <DevisForm
-          open={openForm}
-          onClose={handleClose}
-          onSuccess={handleSuccess}
-        />
+        <Listdevis devis={devisList} setDevis={setDevisList} />
+        <DevisForm open={openForm} onClose={handleClose} onSuccess={handleSuccess} />
       </div>
     </section>
   );

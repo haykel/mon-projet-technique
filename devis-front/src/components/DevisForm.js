@@ -1,5 +1,5 @@
 // src/components/DevisForm.js
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -10,28 +10,32 @@ import {
   FormControlLabel,
   Checkbox,
   MenuItem,
-  Box
+  Box,
 } from '@mui/material';
 import { AuthContext } from '../context/AuthContext';
 
 const typeBienOptions = [
-  { value: 'H',  label: 'Habitation' },
+  { value: 'H', label: 'Habitation' },
   { value: 'NH', label: 'Hors habitation' },
 ];
 const typeGarantieOptions = [
   { value: 'TRC', label: 'TRC seule' },
-  { value: 'DO',  label: 'DO seule' },
+  { value: 'DO', label: 'DO seule' },
   { value: 'DUO', label: 'Duo' },
 ];
-const destinationOptions = typeBienOptions;
+const destinationOptions = [
+  { value: 'H', label: 'Habitation' },
+  { value: 'NH', label: 'Non habitation' },
+];
 const travauxOptions = [
   { value: 'NEUF', label: 'Neuf' },
-  { value: 'RL',   label: 'Rénovation légère' },
-  { value: 'RUR',  label: 'Rénovation lourde' },
+  { value: 'RL', label: 'Rénovation légère' },
+  { value: 'RUR', label: 'Rénovation lourde' },
 ];
 
 export default function DevisForm({ open, onClose, onSuccess }) {
   const { api } = useContext(AuthContext);
+
   const [form, setForm] = useState({
     numero_opportunite: '',
     type_de_bien: 'H',
@@ -45,22 +49,20 @@ export default function DevisForm({ open, onClose, onSuccess }) {
   });
   const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm(f => ({
+    setForm((f) => ({
       ...f,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      // On n'envoie PAS de champ user : le backend se charge de l'affecter
-      await api.post('devis/', form);
-      onSuccess();
-      // réinitialiser le formulaire pour la prochaine ouverture
+      const response = await api.post('devis/', form);
+      onSuccess(response.data);
       setForm({
         numero_opportunite: '',
         type_de_bien: 'H',
@@ -72,6 +74,7 @@ export default function DevisForm({ open, onClose, onSuccess }) {
         client_vip: false,
         souhaite_rcmo: false,
       });
+      onClose();
     } catch (err) {
       console.error(err);
     } finally {
@@ -102,8 +105,10 @@ export default function DevisForm({ open, onClose, onSuccess }) {
             value={form.type_de_bien}
             onChange={handleChange}
           >
-            {typeBienOptions.map(opt => (
-              <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+            {typeBienOptions.map((opt) => (
+              <MenuItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </MenuItem>
             ))}
           </TextField>
           <TextField
@@ -113,8 +118,10 @@ export default function DevisForm({ open, onClose, onSuccess }) {
             value={form.type_de_garantie}
             onChange={handleChange}
           >
-            {typeGarantieOptions.map(opt => (
-              <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+            {typeGarantieOptions.map((opt) => (
+              <MenuItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </MenuItem>
             ))}
           </TextField>
           <TextField
@@ -124,8 +131,10 @@ export default function DevisForm({ open, onClose, onSuccess }) {
             value={form.destination_ouvrage}
             onChange={handleChange}
           >
-            {destinationOptions.map(opt => (
-              <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+            {destinationOptions.map((opt) => (
+              <MenuItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </MenuItem>
             ))}
           </TextField>
           <TextField
@@ -135,8 +144,10 @@ export default function DevisForm({ open, onClose, onSuccess }) {
             value={form.types_travaux}
             onChange={handleChange}
           >
-            {travauxOptions.map(opt => (
-              <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+            {travauxOptions.map((opt) => (
+              <MenuItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </MenuItem>
             ))}
           </TextField>
           <TextField
@@ -181,7 +192,9 @@ export default function DevisForm({ open, onClose, onSuccess }) {
         </Box>
       </DialogContent>
       <DialogActions sx={{ pr: 3, pb: 2 }}>
-        <Button onClick={onClose} disabled={submitting}>Annuler</Button>
+        <Button onClick={onClose} disabled={submitting}>
+          Annuler
+        </Button>
         <Button
           onClick={handleSubmit}
           variant="contained"
